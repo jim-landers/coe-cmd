@@ -2,34 +2,72 @@ import sys, requests, webbrowser
 import creds
 
 
-BASE_ASSET_URL  = 'https://support.engineering.oregonstate.edu/Assets/Edit{}'
-COE_WRAPPER_URL = 'https://tools.engr.oregonstate.edu/coetools/jitbit/?name={}'
-
-CHROME_PATH = 'C:/Program Files/Google/Chrome/Application/chrome.exe %s'
-
-# Random powershell command to open a window, please ignore.
-# Start-Process -FilePath "C:\Program Files\Google\Chrome\Application\chrome.exe" -ArgumentList https://support.engineering.oregonstate.edu/Assets/Edit/2934
+JB_BASE_ASSET_URL  = 'https://support.engineering.oregonstate.edu/Assets/Edit{}'
+COETOOL_BASE_URL   = 'https://tools.engr.oregonstate.edu/coetools/jitbit/?name={}'
+CYDER_BASE_URL     = 'https://cyder.oregonstate.edu/search/?search={}'
+ACTLOG_BASE_URL    = 'https://tools.engr.oregonstate.edu/coetools/lablogs/labinfo.php?hostname={}'
 
 
-def GetAssetJSON(assetName):
-    assetURL = COE_WRAPPER_URL.format(assetName)
 
-    header = {
+
+def JB_GetAssetJSON(assetName):
+    assetURL = COETOOL_BASE_URL.format(assetName)
+    headers = {
         'Authorization' : 'Basic ' + creds.auth
     }
 
-    req = requests.get(assetURL, headers=header)
+    req = requests.get(assetURL, headers=headers)
     return req.json()
 
 
+def JB_OpenAssetPage(assetName):
+    assetJSON = JB_GetAssetJSON(assetName)
+    assetID   = assetJSON[0]['ItemID']
+    assetURL  = JB_BASE_ASSET_URL.format(f"/{assetID}")
+
+    OpenPage(assetURL)
+
+
+def CYDER_OpenSearch(assetName):
+    URL = CYDER_BASE_URL.format(assetName)
+    OpenPage(URL)
+
+
+def ACTLOG_OpenLog(assetName):
+    URL = ACTLOG_BASE_URL.format(assetName)
+    OpenPage(URL)
+
+
+
+def OpenPage(URL):
+    print(f"Opening {URL}")
+    print(f"...")
+    webbrowser.open(URL)
+
+
+def printHelp():
+    print('')
+    print('Current list of supported flags: ')
+    print('---------------------------------')
+    print('#    jb/jitbit <MachineName>')
+    print('#    cy/cyder <MachineName>')
+    print('#    al/activitylog <MachineName>')
+
+    print('')
 
 
 if __name__ == '__main__':
+    try:
+        command   = sys.argv[1]
+        assetName = sys.argv[2]
 
-    assetJSON = GetAssetJSON(sys.argv[1])
-    assetID   = assetJSON[0]['ItemID']
-    assetURL  = BASE_ASSET_URL.format(f"/{assetID}")
-
-    print(assetURL)
-
-    webbrowser.get(CHROME_PATH).open(assetURL)
+        if command == 'jb' or command == 'jitbit':
+            JB_OpenAssetPage(assetName)
+        elif command == 'cy' or command == 'cyder':
+            CYDER_OpenSearch(assetName)
+        elif command == 'al' or command == 'activitylog':
+            ACTLOG_OpenLog(assetName)
+        else:
+            printHelp()
+    except:
+        printHelp()
