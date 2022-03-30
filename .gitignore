@@ -2,9 +2,6 @@
 # TODO (mangosaver): remove creds.py entirely
 creds.py
 
-# credentials.py contains encoded authentication info
-credentials.txt
-
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
