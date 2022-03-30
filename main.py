@@ -2,20 +2,19 @@ import sys
 import requests
 import webbrowser
 
-import credentials
+from api_key import *
 
 JB_BASE_ASSET_URL  = 'https://support.engineering.oregonstate.edu/Assets/Edit{}'
 COETOOL_API_URL    = 'https://tools.engr.oregonstate.edu/coetools/api/'
 CYDER_BASE_URL     = 'https://cyder.oregonstate.edu/search/?search={}'
 ACTLOG_BASE_URL    = 'https://tools.engr.oregonstate.edu/coetools/lablogs/labinfo.php?hostname={}'
 
-
 def JB_GetAssetJSON(assetName: str):
     assetURL = COETOOL_API_URL
-    
+
     payload = {
         'name' : assetName,
-        'api'  : credentials.COETOOLS_SECRET
+        'api'  : GetApiKey()
     }
 
     req = requests.post(assetURL, data=payload)
@@ -61,6 +60,9 @@ def main():
         PrintHelp()
         return
 
+    if not ApiKeyExists():
+      PromptForKey()
+
     command   = sys.argv[1]
     assetName = sys.argv[2]
 
@@ -72,7 +74,6 @@ def main():
         ACTLOG_OpenLog(assetName)
     else:
         PrintHelp()
-
 
 
 if __name__ == '__main__':
