@@ -19,8 +19,5 @@ def CreateCredentials():
     password = getpass.getpass()
     concat = username + ':' + password
     b64 = base64.b64encode(concat.encode())
-    with open('credentials.py', 'w') as creds:
+    with open('credentials.py', 'w') as creds: # TODO (mangosaver): proper string formatting
         creds.write("auth=\"" + b64.decode('utf-8') + "\"")
-
-def ReadCredentials():
-    return credentials.auth

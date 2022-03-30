@@ -1,7 +1,3 @@
-#creds.py holds encoded authentication info, not to be shared.
-# TODO (mangosaver): remove creds.py entirely
-creds.py
-
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
