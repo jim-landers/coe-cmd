@@ -1,6 +1,9 @@
 #creds.py holds encoded authentication info, not to be shared.
+# TODO (mangosaver): remove creds.py entirely
 creds.py
 
+# credentials.py contains encoded authentication info
+credentials.txt
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
