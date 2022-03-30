@@ -2,21 +2,23 @@ import sys
 import requests
 import webbrowser
 
-from auth_management import *
+import credentials
 
 JB_BASE_ASSET_URL  = 'https://support.engineering.oregonstate.edu/Assets/Edit{}'
-COETOOL_BASE_URL   = 'https://tools.engr.oregonstate.edu/coetools/jitbit/?name={}'
+COETOOL_API_URL    = 'https://tools.engr.oregonstate.edu/coetools/api/'
 CYDER_BASE_URL     = 'https://cyder.oregonstate.edu/search/?search={}'
 ACTLOG_BASE_URL    = 'https://tools.engr.oregonstate.edu/coetools/lablogs/labinfo.php?hostname={}'
 
 
 def JB_GetAssetJSON(assetName: str):
-    assetURL = COETOOL_BASE_URL.format(assetName)
-    headers = {
-        'Authorization' : 'Basic ' + credentials.auth
+    assetURL = COETOOL_API_URL
+    
+    payload = {
+        'name' : assetName,
+        'api'  : credentials.COETOOLS_SECRET
     }
 
-    req = requests.get(assetURL, headers=headers)
+    req = requests.post(assetURL, data=payload)
     return req.json()
 
 
@@ -53,16 +55,10 @@ def PrintHelp():
     print()
 
 
+
 def main():
     if len(sys.argv) != 3:
         PrintHelp()
-        return
-
-    if not CredentialsExist():
-        CreateCredentials()
-
-    if credentials.auth == '':
-        print("Credentials cannot be blank (edit or remove credentials.py)")
         return
 
     command   = sys.argv[1]
@@ -76,6 +72,8 @@ def main():
         ACTLOG_OpenLog(assetName)
     else:
         PrintHelp()
+
+
 
 if __name__ == '__main__':
     main()
