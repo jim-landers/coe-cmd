@@ -1,13 +1,21 @@
 import sys
-import requests
 import webbrowser
+import requests
 
 from api_key import *
 
-JB_BASE_ASSET_URL  = 'https://support.engineering.oregonstate.edu/Assets/Edit{}'
-COETOOL_API_URL    = 'https://tools.engr.oregonstate.edu/coetools/api/'
-CYDER_BASE_URL     = 'https://cyder.oregonstate.edu/search/?search={}'
-ACTLOG_BASE_URL    = 'https://tools.engr.oregonstate.edu/coetools/lablogs/labinfo.php?hostname={}'
+COETOOL_API_URL = 'https://tools.engr.oregonstate.edu/coetools/api/'
+JB_BASE_URL     = 'https://support.engineering.oregonstate.edu/{}'
+JB_ASSET_URL    = JB_BASE_URL.format('Assets/Edit/{}')
+JB_TICKET_URL   = JB_BASE_URL.format('Ticket/{}')
+
+
+CYDER_BASE_URL  = 'https://cyder.oregonstate.edu/search/?search={}'
+
+ACTLOG_BASE_URL = 'https://tools.engr.oregonstate.edu/coetools/lablogs/labinfo.php?{}'
+
+
+
 
 def JB_GetAssetJSON(assetName: str):
     assetURL = COETOOL_API_URL
@@ -21,10 +29,14 @@ def JB_GetAssetJSON(assetName: str):
     return req.json()
 
 
+def JB_OpenTicket(ticketNumber: str):
+    OpenPage(JB_TICKET_URL.format(ticketNumber))
+
+
 def JB_OpenAssetPage(assetName: str):
     assetJSON = JB_GetAssetJSON(assetName)
     assetID   = assetJSON[0]['ItemID']
-    assetURL  = JB_BASE_ASSET_URL.format(f"/{assetID}")
+    assetURL  = JB_ASSET_URL.format(f"{assetID}")
 
     OpenPage(assetURL)
 
@@ -34,13 +46,18 @@ def CYDER_OpenSearch(assetName: str):
     OpenPage(URL)
 
 
-def ACTLOG_OpenLog(assetName: str):
-    URL = ACTLOG_BASE_URL.format(assetName)
+def ACTLOG_OpenMachineLog(assetName: str):
+    URL = ACTLOG_BASE_URL.format(f"hostname={assetName}")
+    OpenPage(URL)
+
+
+def ACTLOG_OpenUserLog(ONID: str):
+    URL = ACTLOG_BASE_URL.format(f"username={ONID}")
     OpenPage(URL)
 
 
 def OpenPage(URL: str):
-    print(f"Opening {URL}...")
+    print(f"Opening {URL} ...")
     webbrowser.open(URL)
 
 
@@ -49,9 +66,12 @@ def PrintHelp():
     print('Current list of supported flags: ')
     print('---------------------------------')
     print('#    jb/jitbit <MachineName>')
+    print('#    t/ticket <TicketNumber>')
     print('#    cy/cyder <MachineName>')
-    print('#    al/activitylog <MachineName>')
+    print('#    alm/activitylogm <MachineName>')
+    print('#    alu/activitylogu <ONID>')
     print()
+
 
 
 
@@ -61,17 +81,21 @@ def main():
         return
 
     if not ApiKeyExists():
-      PromptForKey()
+        PromptForKey()
 
-    command   = sys.argv[1]
-    assetName = sys.argv[2]
+    command  = sys.argv[1]
+    identity = sys.argv[2]
 
     if command == 'jb' or command == 'jitbit':
-        JB_OpenAssetPage(assetName)
+        JB_OpenAssetPage(identity)
+    elif command == 't' or command == 'ticket':
+        JB_OpenTicket(identity)
     elif command == 'cy' or command == 'cyder':
-        CYDER_OpenSearch(assetName)
-    elif command == 'al' or command == 'activitylog':
-        ACTLOG_OpenLog(assetName)
+        CYDER_OpenSearch(identity)
+    elif command == 'alm' or command == 'activitylogm':
+        ACTLOG_OpenMachineLog(identity)
+    elif command == 'alu' or command == 'activitylogu':
+        ACTLOG_OpenUserLog(identity)
     else:
         PrintHelp()
 
