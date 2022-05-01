@@ -2,7 +2,7 @@ import sys
 import webbrowser
 import requests
 
-from api_key import *
+import api_key
 
 COETOOL_API_URL = 'https://tools.engr.oregonstate.edu/coetools/api/'
 JB_BASE_URL     = 'https://support.engineering.oregonstate.edu/{}'
@@ -22,7 +22,7 @@ def JB_GetAssetJSON(assetName: str):
 
     payload = {
         'name' : assetName,
-        'api'  : GetApiKey()
+        'api'  : api_key.GetApiKey()
     }
 
     req = requests.post(assetURL, data=payload)
@@ -80,21 +80,21 @@ def main():
         PrintHelp()
         return
 
-    if not ApiKeyExists():
-        PromptForKey()
+    if not api_key.ApiKeyExists():
+        api_key.PromptForKey()
 
     command  = sys.argv[1]
     identity = sys.argv[2]
 
-    if command == 'jb' or command == 'jitbit':
+    if command in ('jb', 'jitbit'):
         JB_OpenAssetPage(identity)
-    elif command == 't' or command == 'ticket':
+    elif command in ('t', 'ticket'):
         JB_OpenTicket(identity)
-    elif command == 'cy' or command == 'cyder':
+    elif command in ('cy', 'cyder'):
         CYDER_OpenSearch(identity)
-    elif command == 'alm' or command == 'activitylogm':
+    elif command in ('alm', 'activitylogm'):
         ACTLOG_OpenMachineLog(identity)
-    elif command == 'alu' or command == 'activitylogu':
+    elif command in ('alu', 'activitylogu'):
         ACTLOG_OpenUserLog(identity)
     else:
         PrintHelp()
