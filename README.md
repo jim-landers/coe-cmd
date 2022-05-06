@@ -11,11 +11,11 @@ This tool is tailored to only work on COE domain machines. This setup process sh
 
 1. Have a working version of Python3 on your machine. (Available in Software Center)
 2. Clone/Download this project to your network Home Directory. This means the project's filepath should look something like: *"Z:\coecmd"* or *"\\\depot.engr.oregonstate.edu\Users\YourONID\coecmd"*.
-3. Run `setup.bat` in the project folder.
+3. Run `setup.ps1` in the project folder or through Powershell.
 4. Restart any open terminal windows.
 5. Run the command `coecmd`. If it runs and prints a list of currently supported commands, the setup was successful.
 
-**IMPORTANT NOTE:** The `setup.bat` currently overwrites any directories you have custom added to your profile's Windows PATH. If this is a concern, it should be fairly simple to just delete the `setx` line from the `setup.bat`, then add *"~\\.local\bin"* to your profile's PATH manually. (This shouldn't be a problem for most people.)
+
 
 
 
